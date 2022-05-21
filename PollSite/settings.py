@@ -34,6 +34,7 @@ os.environ['DJANGO_PASS'] = 'Suraj@10599'
 # Application definition
 
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
