@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,6 +26,9 @@ SECRET_KEY = 'django-insecure-y%h_c1_c0za&f2i*yo)!q%7nqm+_u*o14a4$jc8^5t__zz=1y=
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+os.environ['DJANGO_USERNAME'] = 'root'
+os.environ['DJANGO_PASS'] = 'Suraj@10599'
 
 
 # Application definition
@@ -76,8 +79,13 @@ WSGI_APPLICATION = 'PollSite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Polls',
+        'USER': os.environ.get('DJANGO_USERNAME'),
+        'PASSWORD': os.environ.get('DJANGO_PASS'),
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+        'USE_TZ': True
     }
 }
 
