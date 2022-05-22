@@ -3,6 +3,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import F
 from django.views import generic
+from django.utils import timezone
+
 from .models import Question, Choice
 
 
@@ -13,13 +15,23 @@ class IndexView(generic.ListView):
 
     # get the list of query set
     def get_queryset(self):
-        return Question.objects.order_by('pub_date')[:5]
+        """
+        Return the last 5 published questions
+        """
+        return Question.objects.exclude(choice__isnull=True).filter(pub_date__lte=timezone.now()) \
+                   .order_by('-pub_date')[:5]
 
 
 # detail view that displays details of the current question
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        """
+        Excludes future questions
+        """
+        return Question.objects.exclude(choice__isnull=True).filter(pub_date__lte=timezone.now())
 
 
 # results view that shows results of the current poll application
