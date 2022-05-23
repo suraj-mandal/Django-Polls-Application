@@ -12,6 +12,12 @@ from .models import Question, Choice
 class IndexView(generic.ListView):
     template_name = "polls/index.html"
     context_object_name = 'latest_question_list'
+    # implementing pagination here
+    paginate_by = 2
+
+    def get_paginate_by(self, queryset):
+        # if paginate_by key is not found then set default to the current value
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
     # get the list of query set
     def get_queryset(self):

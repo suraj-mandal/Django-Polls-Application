@@ -97,6 +97,18 @@ class QuestionIndexViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['latest_question_list'], [question])
 
+    def test_questions_with_pagination(self):
+        question1 = create_question_with_choices("Question with choices", days=-2)
+        question2 = create_question_with_choices("Question with choices", days=-2)
+        question3 = create_question_with_choices("Question with choices", days=-2)
+        question4 = create_question_with_choices("Question with choices", days=-2)
+        first_response = self.client.get(reverse('polls:index'), {'page': 1})
+        second_response = self.client.get(reverse('polls:index'), {'page': 2})
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(second_response.status_code, 200)
+        self.assertQuerysetEqual(first_response.context['latest_question_list'], [question4, question3])
+        self.assertQuerysetEqual(second_response.context['latest_question_list'], [question2, question1])
+
 
 class QuestionDetailViewTests(TestCase):
     def test_with_invalid_question_id(self):

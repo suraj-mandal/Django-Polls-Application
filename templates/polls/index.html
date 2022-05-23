@@ -3,11 +3,45 @@
 <link rel="stylesheet" href="{% static 'polls/css/styles.css' %}">
 
 {% if latest_question_list %}
+    {#    creating a form for pagination #}
+    <h1>Select Pagination</h1>
+    {#    this section will be updated later when page is made beautiful #}
+    {#   now focus on the functionality of the pagination #}
+    <form id="pagination_form" action="{% url 'polls:index' %}" method="get">
+        <select id="pagination_selector" name="paginate_by">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+    </form>
+    <hr>
+    <h1>Questions</h1>
     <ul>
         {% for question in latest_question_list %}
-            <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+            {% include 'polls/question_detail.html' with current_question=question %}
         {% endfor %}
     </ul>
+    {#    create pagination here #}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+
+<script src="{% static 'polls/js/script.js' %}"></script>
