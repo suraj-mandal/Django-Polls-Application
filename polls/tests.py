@@ -3,13 +3,18 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.models import User
 
-from .models import Question, Choice
+from .models import Question, Choice, PollUser
 
 
 def create_question_with_choices(question_text, days):
+    user = User(username="test", password="test")
+    user.save()
+    p = PollUser(user=user, email="test@test.com")
+    p.save()
     time = timezone.now() + timezone.timedelta(days=days)
-    question = Question.objects.create(question_text=question_text, pub_date=time)
+    question = Question.objects.create(question_text=question_text, pub_date=time, user_id=p.user.id)
     question.choice_set.create(choice_text='First choice', votes=0)
     question.choice_set.create(choice_text='Second choice', votes=0)
     question.choice_set.create(choice_text='Third choice', votes=0)
@@ -17,12 +22,17 @@ def create_question_with_choices(question_text, days):
 
 
 def create_question_without_choices(question_text, days):
+    user = User(username="test", password="test")
+    user.save()
+    p = PollUser(user=user, email="test@test.com")
+    p.save()
     time = timezone.now() + timezone.timedelta(days=days)
-    return Question.objects.create(question_text=question_text, pub_date=time)
+    return Question.objects.create(question_text=question_text, pub_date=time, user_id=p.user.id)
 
 
 # Create your tests here.
 # testing the Question model here
+# will need to modify the tests here
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
         """
@@ -114,8 +124,9 @@ class QuestionDetailViewTests(TestCase):
     def test_with_invalid_question_id(self):
         question = create_question_with_choices("Delete question", days=-5)
         question_id = question.id
+        print(question_id)
         question.delete()
-        response = self.client.get(reverse('polls:detail', args=(question_id,)))
+        response = self.client.get(reverse('polls:detail', args=(1,)))
         self.assertEqual(response.status_code, 404)
 
     def test_with_future_question_id(self):

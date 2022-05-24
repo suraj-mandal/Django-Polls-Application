@@ -2,18 +2,40 @@
 
 <link rel="stylesheet" href="{% static 'polls/css/styles.css' %}">
 
+{# basic navigation bar #}
+{# If the user is present then give the logout link #}
+{# else give the user login / registration link #}
+{% if request.user.is_authenticated %}
+    <a href="{% url 'polls:logout' %}">Logout</a>
+{% else %}
+    <div>
+        <a href="{% url 'polls:register' %}">Register</a>
+    </div>
+    <div>
+        <a href="{% url 'polls:login' %}">Login</a>
+    </div>
+{% endif %}
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 {% if latest_question_list %}
     {#    creating a form for pagination #}
     <h1>Select Pagination</h1>
     {#    this section will be updated later when page is made beautiful #}
     {#   now focus on the functionality of the pagination #}
     <form id="pagination_form" action="{% url 'polls:index' %}" method="get">
-        <select id="pagination_selector" name="paginate_by">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-        </select>
+        <label for="pagination_selector">Pagination</label><select id="pagination_selector" name="paginate_by">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
     </form>
     <hr>
     <h1>Questions</h1>
